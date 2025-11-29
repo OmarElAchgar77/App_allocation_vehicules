@@ -55,4 +55,47 @@ class ReservationController extends Controller
 
         return response()->json(['message' => 'Status updated', 'reservation' => $reservation]);
     }
+
+    // User: Get details of a specific reservation
+    public function show($id) {
+        // On récupère la réservation avec les infos du véhicule associé
+        $reservation = Reservation::with('vehicle')->find($id);
+
+        // 1. Vérifier si elle existe
+        if (!$reservation) {
+            return response()->json(['message' => 'Reservation not found'], 404);
+        }
+
+        // 2. SÉCURITÉ : Vérifier que cette réservation appartient bien à l'utilisateur connecté
+        if ($reservation->user_id !== Auth::id()) {
+            return response()->json(['message' => 'Unauthorized access'], 403);
+        }
+
+        return response()->json($reservation);
+    }
+
+    // User: Cancel Reservation (Only if pending)
+    public function destroy($id) {
+        $reservation = Reservation::find($id);
+
+        // Vérifier si la réservation existe
+        if (!$reservation) {
+            return response()->json(['message' => 'Reservation not found'], 404);
+        }
+
+        // Vérifier que c'est bien la réservation de l'utilisateur connecté
+        if ($reservation->user_id !== Auth::id()) {
+            return response()->json(['message' => 'Unauthorized access'], 403);
+        }
+
+        // Vérifier que le statut est bien 'pending'
+        if ($reservation->status !== 'pending') {
+            return response()->json(['message' => 'Cannot delete a reservation that is already processed'], 400);
+        }
+
+        // Si tout est bon, on supprime (avec cascade, le fichier image restera dans le storage mais l'entrée DB disparaît)
+        $reservation->delete();
+
+        return response()->json(['message' => 'Reservation cancelled successfully']);
+    }
 }
