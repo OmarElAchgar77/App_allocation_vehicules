@@ -28,5 +28,8 @@ Route::middleware('auth:sanctum')->group(function () {
         // Admin Reservations
         Route::get('/admin/reservations', [ReservationController::class, 'index']);
         Route::put('/admin/reservations/{id}/status', [ReservationController::class, 'updateStatus']);
+
+        // Stats
+        Route::get('/admin/stats', [DashboardController::class, 'stats']);
     });
 });
