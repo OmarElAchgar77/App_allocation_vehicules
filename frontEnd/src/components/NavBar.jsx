@@ -1,34 +1,115 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link } from "react-router-dom";
+import Logo from "../images/logo/logo.jpg";
+import { useState } from "react";
 
-export default function NavBar({ user, onLogout }) {
+function Navbar() {
+  const [nav, setNav] = useState(false);
+
+  const openNav = () => {
+    setNav(!nav);
+  };
+
   return (
-    <header className="bg-gradient-to-r from-sky-600 via-indigo-600 to-purple-600 text-white shadow">
-      <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
-        <Link to="/" className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-lg bg-white/20 flex items-center justify-center text-lg font-bold">CR</div>
-          <div>
-            <div className="font-bold">Car & Motors</div>
-            <div className="text-xs opacity-75">Rentals made easy</div>
+    <>
+      <nav>
+        <div className={`mobile-navbar ${nav ? "open-nav" : ""}`}>
+          <div onClick={openNav} className="mobile-navbar__close">
+            <i className="fa-solid fa-xmark"></i>
           </div>
-        </Link>
-        <nav className="flex items-center gap-4">
-          <Link to="/" className="hover:underline">Home</Link>
-          <Link to="/browse" className="hover:underline">Browse</Link>
-          {user?.isAdmin && <Link to="/admin" className="hover:underline">Admin</Link>}
-          {!user ? (
-            <div className="flex gap-2">
-              <Link to="/login" className="px-3 py-1 bg-white text-sky-700 rounded-md font-medium">Sign in</Link>
-              <Link to="/register" className="px-3 py-1 border border-white/40 rounded-md">Register</Link>
-            </div>
-          ) : (
-            <div className="flex items-center gap-3">
-              <Link to="/profile" className="text-sm">{user.name}</Link>
-              <button onClick={onLogout} className="px-3 py-1 bg-white/20 rounded-md">Logout</button>
-            </div>
-          )}
-        </nav>
-      </div>
-    </header>
+          <ul className="mobile-navbar__links">
+            <li>
+              <Link onClick={openNav} to="/">
+                Home
+              </Link>
+            </li>
+            <li>
+              <Link onClick={openNav} to="/about">
+                About
+              </Link>
+            </li>
+            <li>
+              <Link onClick={openNav} to="/models">
+                Models
+              </Link>
+            </li>
+            <li>
+              <Link onClick={openNav} to="/testimonials">
+                Testimonials
+              </Link>
+            </li>
+            <li>
+              <Link onClick={openNav} to="/team">
+                Our Team
+              </Link>
+            </li>
+            <li>
+              <Link onClick={openNav} to="/contact">
+                Contact
+              </Link>
+            </li>
+          </ul>
+        </div>
+
+
+        <div className="navbar">
+          <div className="navbar__img">
+            <Link to="/" onClick={() => window.scrollTo(0, 0)}>
+              <img src={Logo} alt="logo-img" />
+            </Link>
+          </div>
+          <ul className="navbar__links">
+            <li>
+              <Link className="home-link" to="/">
+                Home
+              </Link>
+            </li>
+            <li>
+              {" "}
+              <Link className="about-link" to="/about">
+                About
+              </Link>
+            </li>
+            <li>
+              {" "}
+              <Link className="models-link" to="/models">
+                Vehicle Models
+              </Link>
+            </li>
+            <li>
+              {" "}
+              <Link className="testi-link" to="/testimonials">
+                Testimonials
+              </Link>
+            </li>
+            <li>
+              {" "}
+              <Link className="team-link" to="/team">
+                Our Team
+              </Link>
+            </li>
+            <li>
+              {" "}
+              <Link className="contact-link" to="/contact">
+                Contact
+              </Link>
+            </li>
+          </ul>
+          <div className="navbar__buttons">
+            <Link className="navbar__buttons__sign-in" to="/">
+              Sign In
+            </Link>
+            <Link className="navbar__buttons__register" to="/">
+              Register
+            </Link>
+          </div>
+
+          <div className="mobile-hamb" onClick={openNav}>
+            <i className="fa-solid fa-bars"></i>
+          </div>
+        </div>
+      </nav>
+    </>
   );
 }
+
+export default Navbar;
