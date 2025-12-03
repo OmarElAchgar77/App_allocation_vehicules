@@ -1,0 +1,335 @@
+/* Dashboard.css - Bigger Fonts Version */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  background-color: #f3f4f6;
+  
+  /* UPDATED: Increased base size from default (16px) to 18px */
+  font-size: 18px; 
+}
+
+.dashboard-container {
+  display: flex;
+  height: 100vh;
+  color: #1f2937;
+}
+
+/* --- Sidebar --- */
+.sidebar {
+  width: 280px; /* UPDATED: Made sidebar slightly wider to fit larger text */
+  background-color: white;
+  border-right: 1px solid #e5e7eb;
+  display: flex;
+  flex-direction: column;
+}
+
+.logo-container {
+  height: 70px; /* UPDATED: Slightly taller */
+  display: flex;
+  align-items: center;
+  padding: 0 24px;
+  border-bottom: 1px solid #e5e7eb;
+  color: #2563eb;
+  font-weight: 800;
+  font-size: 1.5rem; /* UPDATED: Larger logo text */
+  gap: 12px;
+}
+
+.nav-links {
+  padding: 20px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  padding: 14px 24px; /* UPDATED: More padding */
+  border: none;
+  background: none;
+  width: 100%;
+  cursor: pointer;
+  font-size: 1.1rem; /* UPDATED: Larger nav text */
+  color: #6b7280;
+  gap: 14px;
+  transition: all 0.2s;
+}
+
+.nav-item:hover {
+  background-color: #f3f4f6;
+  color: #1f2937;
+}
+
+.nav-item.active {
+  background-color: #eff6ff;
+  color: #2563eb;
+  border-right: 4px solid #2563eb;
+}
+
+.logout-container {
+  margin-top: auto;
+  padding: 24px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.logout-btn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #ef4444;
+  background: none;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  padding: 12px;
+  font-weight: 500;
+  font-size: 1.1rem; /* UPDATED */
+}
+
+.logout-btn:hover {
+  background-color: #fef2f2;
+  border-radius: 8px;
+}
+
+/* --- Main Content --- */
+.main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.top-header {
+  height: 70px;
+  background-color: white;
+  border-bottom: 1px solid #e5e7eb;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 30px;
+}
+
+.search-bar input {
+  background-color: #f3f4f6;
+  border: none;
+  padding: 12px 18px;
+  border-radius: 8px;
+  width: 280px;
+  font-size: 1rem; /* UPDATED */
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.user-profile {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.avatar {
+  width: 45px; /* UPDATED */
+  height: 45px; /* UPDATED */
+  background-color: #eff6ff;
+  color: #2563eb;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 1.1rem;
+}
+
+.content-area {
+  flex: 1;
+  padding: 30px;
+  overflow-y: auto;
+}
+
+/* --- Stats Grid --- */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 24px;
+  margin-bottom: 30px;
+}
+
+.stat-card {
+  background: white;
+  padding: 26px;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.stat-info h3 {
+  margin: 8px 0;
+  font-size: 1.75rem; /* UPDATED: Big numbers */
+  color: #1f2937;
+}
+
+.stat-info p {
+  margin: 0;
+  color: #6b7280;
+  font-size: 1rem; /* UPDATED */
+}
+
+.stat-change {
+  font-size: 0.9rem; /* UPDATED */
+  font-weight: 600;
+}
+.text-green { color: #10b981; }
+.text-red { color: #ef4444; }
+
+.icon-box {
+  padding: 14px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.bg-green { background: #d1fae5; color: #059669; }
+.bg-blue { background: #dbeafe; color: #2563eb; }
+.bg-purple { background: #f3e8ff; color: #7c3aed; }
+.bg-orange { background: #ffedd5; color: #ea580c; }
+
+/* --- Table --- */
+.recent-orders {
+  background: white;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  overflow: hidden;
+}
+
+.table-header {
+  padding: 24px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.table-header h2 {
+  margin: 0;
+  font-size: 1.25rem; /* UPDATED */
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+th {
+  background-color: #f9fafb;
+  padding: 16px 24px;
+  font-size: 0.85rem; /* UPDATED: Easier to read headers */
+  text-transform: uppercase;
+  color: #6b7280;
+  font-weight: 700; /* UPDATED: Bolder */
+}
+
+td {
+  padding: 20px 24px; /* UPDATED: More breathing room */
+  border-bottom: 1px solid #f3f4f6;
+  font-size: 1rem; /* UPDATED */
+  color: #374151;
+}
+
+tr:last-child td {
+  border-bottom: none;
+}
+
+/* --- Status Badges --- */
+.badge {
+  padding: 6px 14px; /* UPDATED: Larger badge */
+  border-radius: 20px;
+  font-size: 0.85rem; /* UPDATED */
+  font-weight: 600;
+}
+.status-Active, .status-Available { background: #d1fae5; color: #065f46; }
+.status-Pending { background: #fef3c7; color: #92400e; }
+.status-Completed { background: #f3f4f6; color: #374151; }
+.status-Rented { background: #e0e7ff; color: #3730a3; }
+.status-Maintenance { background: #fee2e2; color: #991b1b; }
+
+/* --- Fleet Grid --- */
+.fleet-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); /* UPDATED: Wider cards */
+  gap: 28px;
+}
+
+.fleet-card {
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid #e5e7eb;
+  transition: transform 0.2s;
+}
+
+.fleet-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+.car-image {
+  height: 220px; /* UPDATED */
+  width: 100%;
+  object-fit: cover;
+}
+
+.car-details {
+  padding: 24px;
+}
+
+.car-details h3 {
+  margin: 0 0 8px 0;
+  font-size: 1.25rem; /* UPDATED */
+}
+
+.car-specs {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 18px;
+  padding-top: 18px;
+  border-top: 1px solid #f3f4f6;
+  color: #6b7280;
+  font-size: 0.95rem; /* UPDATED */
+}
+
+.spec-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-primary {
+  background-color: #2563eb;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 1rem; /* UPDATED */
+}
+
+.btn-primary:hover {
+  background-color: #1d4ed8;
+}
+
+.flex-between {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}

@@ -8,7 +8,6 @@ export default function Filter({ filters, setFilters }) {
     border: `2px solid ${themeColor}`,
     borderRadius: "8px",
     outline: "none",
-    fontSize: "1rem",
     transition: "border-color 0.2s",
     flex: "2 2 220px",             // slightly wider
     fontSize: "1.5rem",            // bigger text
