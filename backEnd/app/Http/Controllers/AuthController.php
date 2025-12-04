@@ -40,6 +40,22 @@ class AuthController extends Controller
         return response()->json(['user' => $user, 'token' => $token]);
     }
 
+    public function checkEmail(Request $request)
+    {
+        // 1. Validate the input to ensure it's a properly formatted email
+        $request->validate([
+            'email' => 'required|email',
+        ]);
+
+        // 2. Check if the user exists in the database
+        $userExists = User::where('email', $request->email)->exists();
+
+        // 3. Return a JSON response
+        return response()->json([
+            'exists' => $userExists
+        ]);
+    }
+
     // Logout
     public function logout(Request $request) {
         $request->user()->currentAccessToken()->delete();
