@@ -512,7 +512,7 @@ body {
 }
 
 .active-modal {
-  opacity: 0 !important;
+  opacity: 1 !important;
   display: flex !important;
 }
 
