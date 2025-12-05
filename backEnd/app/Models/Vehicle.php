@@ -15,7 +15,9 @@ class Vehicle extends Model
         'price_per_day', 
         'description', 
         'image', 
-        'is_available'
+        'is_available',
+        'transmission', 
+        'carburant'
     ];
 
     public function reservations() {

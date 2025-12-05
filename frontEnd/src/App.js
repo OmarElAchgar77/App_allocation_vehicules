@@ -1,7 +1,10 @@
 import "../src/dist/styles.css";
 import About from "./Pages/About";
 import Home from "./Pages/Home";
-import AdminDashboard from "./Pages/AdminDashboard";
+import AuthPage from "./Pages/AuthPage";
+import Reserves from "./Pages/Reserves";
+import AdminLogin from "./Pages/AdminLogin";
+import AdminPage from "./Pages/AdminPage";
 import Navbar from "../src/components/Navbar";
 import { Route, Routes, useLocation  } from "react-router-dom";
 import Models from "./Pages/Models";
@@ -11,7 +14,7 @@ import Contact from "./Pages/Contact";
 
 function App() {
   const location = useLocation();
-  const hideNavbarRoutes = ["/admin"];
+  const hideNavbarRoutes = ["/admin", "/admin/home"];
 
   return (
     <>
@@ -23,7 +26,10 @@ function App() {
         <Route path="testimonials" element={<TestimonialsPage />} />
         <Route path="team" element={<Team />} />
         <Route path="contact" element={<Contact />} />
-        <Route path="admin" element={<AdminDashboard />} />
+        <Route path="auth" element={<AuthPage />} />
+        <Route path="Reserves" element={<Reserves />} />
+        <Route path="admin" element={<AdminLogin />} />
+        <Route path="admin/home" element={<AdminPage />} />
       </Routes>
     </>
   );

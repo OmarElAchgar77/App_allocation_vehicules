@@ -1,6 +1,33 @@
+import {apiClient, apiAdmin} from '../api/api';
+import { useState, useEffect } from "react";
+import { Link, useNavigate } from 'react-router-dom';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const themeColor = "#29476d";
 export default function CarCard({ car }) {
+  const navigate = useNavigate();
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  const checkAuthStatus = () => {
+    const token = localStorage.getItem('auth_token');
+    if (token) {
+        apiClient.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+        setIsAuthenticated(true);
+    } else {
+        setIsAuthenticated(false);
+    }
+  };
+
+  const handleRent = () =>{
+    if(!isAuthenticated){
+      toast.error("Log In Fisrt");
+      navigate('/auth');
+    }else{
+      
+    }
+  }
+
   const styles = {
     card: {
       width: 420,
@@ -98,16 +125,6 @@ export default function CarCard({ car }) {
       fontWeight: 700,
       boxShadow: "0 6px 14px rgba(41,71,109,0.14)",
     },
-    btnGhost: {
-      background: "transparent",
-      color: themeColor,
-      border: `1.5px solid ${themeColor}`,
-      padding: "9px 12px",
-      borderRadius: 10,
-      cursor: "pointer",
-      fontWeight: 700,
-      minWidth: 100,
-    },
     footer: {
       display: "flex",
       justifyContent: "space-between",
@@ -118,17 +135,19 @@ export default function CarCard({ car }) {
     },
   };
 
+  const name = car.brand + " " + car.model;
+
   return (
     <article style={styles.card} aria-labelledby={`car-${car.id}-title`}>
       <div style={styles.top}>
-        {car.img ? (
-          <img src={car.img} alt={`${car.make} ${car.name}`} style={styles.img} />
+        {car.image ? (
+          <img src={car.image} alt={`${car.description} ${name}`} style={styles.img} />
         ) : (
           <div style={{ textAlign: "center", color: "#94a3b8" }}>No image</div>
         )}
 
         <div style={styles.priceBadge}>
-          ${car.price}
+          {car.price_per_day} DH
           <span style={{ fontWeight: 500, fontSize: 12, marginLeft: 6 }}>/day</span>
         </div>
       </div>
@@ -137,33 +156,25 @@ export default function CarCard({ car }) {
         <div style={styles.titleRow}>
           <div>
             <h3 id={`car-${car.id}-title`} style={styles.name}>
-              {car.name}
+              {name}
             </h3>
-            <p style={styles.make}>{car.make}</p>
+            <p style={styles.make}>{car.description}</p>
           </div>
         </div>
 
         <div style={styles.specs}>
-          <span style={styles.chip}>🚪 {car.doors}</span>
-          <span style={styles.chip}>⚙️ {car.transmission}</span>
-          <span style={styles.chip}>⛽ {car.fuel}</span>
+          {/* <span style={styles.chip}>🚪 {car.doors}</span> */}
+          <span style={styles.chip}>⚙️ {car.model}</span>
+          <span style={styles.chip}>🗓️ {car.year}</span>
         </div>
 
         <div style={styles.actions}>
           <button
             style={styles.btnPrimary}
-            onClick={() => console.log("Rent clicked", car.id)}
-            aria-label={`Rent ${car.name}`}
+            onClick={handleRent}
+            aria-label={`Rent ${name}`}
           >
-            Rent now
-          </button>
-
-          <button
-            style={styles.btnGhost}
-            onClick={() => console.log("Details clicked", car.id)}
-            aria-label={`View details of ${car.name}`}
-          >
-            Details
+            Resirve
           </button>
         </div>
       </div>

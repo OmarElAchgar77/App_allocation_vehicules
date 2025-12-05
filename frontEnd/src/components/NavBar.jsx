@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import Logo from "../images/logo/logo.jpg";
 import { useState, useEffect } from "react";
-import apiClient from '../api/apiClient';
+import {apiClient, apiAdmin} from '../api/api';
 
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';

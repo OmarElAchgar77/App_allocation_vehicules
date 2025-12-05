@@ -4,7 +4,7 @@ import CarCard from "../components/CarCard";
 import Filter from "../components/Filter";
 
 import React, { useState, useEffect } from "react";
-import apiClient from '../api/apiClient';
+import {apiClient, apiAdmin} from '../api/api';
 
 export default function Models() {
   const [carModels, setCarModels] = useState([]);
@@ -19,6 +19,7 @@ export default function Models() {
       try {
         // 2. Await the successful API call to get the response object
         const response = await apiClient.get('/vehicles');
+        console.log(response.data);
         
         // 3. Set carModels state to the actual data array from the response
         // This is the crucial fix: you must wait for the data before setting the state.

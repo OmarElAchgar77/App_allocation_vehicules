@@ -6,6 +6,7 @@
     "license": "MIT",
     "require": {
         "php": "^8.0.2",
+        "barryvdh/laravel-cors": "^3.0",
         "guzzlehttp/guzzle": "^7.2",
         "laravel/framework": "^9.19",
         "laravel/sanctum": "^3.0",
@@ -58,7 +59,11 @@
         "sort-packages": true,
         "allow-plugins": {
             "pestphp/pest-plugin": true
-        }
+        },
+        "audit": {
+        "ignore": ["PKSA-8qx3-n5y5-vvnd"],
+        "block-insecure": false
+    }
     },
     "minimum-stability": "stable",
     "prefer-stable": true

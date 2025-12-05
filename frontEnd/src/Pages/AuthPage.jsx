@@ -1,6 +1,6 @@
 import React, { useState, useEffect} from 'react';
 import './AuthPage.css';
-import apiClient from '../api/apiClient';
+import {apiClient, apiAdmin} from '../api/api';
 
 import { Link, useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
@@ -20,7 +20,7 @@ const AuthPage = () => {
   const [errors, setErrors] = useState({});
 
   useEffect(() => {
-    const token = localStorage.getItem('auth_token');
+    const token = localStorage.getItem('userToken');
     if (token) {
        apiClient.defaults.headers.common['Authorization'] = `Bearer ${token}`;
        setIsAuthenticated(true);
