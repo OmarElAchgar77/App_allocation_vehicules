@@ -55,7 +55,6 @@ function Navbar() {
             
             setIsAuthenticated(false);
             
-            // Optional: Reload page to clear any other state/cache
             window.location.reload(); 
         });
     } 

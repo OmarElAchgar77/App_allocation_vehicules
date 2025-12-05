@@ -163,7 +163,7 @@ export default function CarCard({ car }) {
         </div>
 
         <div style={styles.specs}>
-          {/* <span style={styles.chip}>🚪 {car.doors}</span> */}
+          
           <span style={styles.chip}>⚙️ {car.model}</span>
           <span style={styles.chip}>🗓️ {car.year}</span>
         </div>

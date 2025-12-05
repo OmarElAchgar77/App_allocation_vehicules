@@ -58,25 +58,25 @@ function ReservationList() {
                             />
                         )}
                         <div className="details">
-                            {/* Detail 1: ID */}
+                            
                             <p>
                                 <span style={{ marginRight: '8px' }} role="img" aria-label="ID">#️⃣</span>
                                 <strong>Reservation ID:</strong> {reservation.id}
                             </p>
                             
-                            {/* Detail 2: Period */}
+                            
                             <p>
                                 <span style={{ marginRight: '8px' }} role="img" aria-label="Dates">🗓️</span>
                                 <strong>Period:</strong> {reservation.start_date} to {reservation.end_date}
                             </p>
                             
-                            {/* Detail 3: Price/Day */}
+                            
                             <p>
                                 <span style={{ marginRight: '8px' }} role="img" aria-label="Price">💲</span>
                                 <strong>Price/Day:</strong> {reservation.vehicle.price_per_day} DH
                             </p>
                             
-                            {/* Detail 4: Driver's License Link (Conditional) */}
+                            
                             {reservation.drivers_license && (
                                 <p>
                                     <span style={{ marginRight: '8px' }} role="img" aria-label="License">💳</span>

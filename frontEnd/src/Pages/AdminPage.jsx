@@ -143,14 +143,13 @@ function ManageCars() {
     try {
       await apiAdmin.delete(`/vehicles/${id}`);
       toast.success(`Car ID ${id} deleted successfully.`);
-      fetchVehicles(); // Refresh the list
+      fetchVehicles();
     } catch (err) {
       const msg = err.response?.data?.message || 'Failed to delete car.';
       toast.error(`Error deleting car: ${msg}`);
     }
   };
 
-  // --- Render Logic ---
   
   const renderCarForm = () => (
     <form onSubmit={handleSubmit} className="add-car-form-grid">
@@ -182,7 +181,7 @@ function ManageCars() {
         <button type="submit" className={`btn ${carData.id ? 'btn-update' : 'btn-add'}`}>
           {carData.id ? 'Save Changes' : 'Add Car'}
         </button>
-        {/* FIXED: Always display Cancel button, calls resetForm to close the modal */}
+        
         <button type="button" onClick={resetForm} className="btn btn-cancel">
           Cancel
         </button>
@@ -196,7 +195,7 @@ function ManageCars() {
   return (
     <div className="manage-cars-container">
       
-      {/* --- 1. Add/Edit Modal/Form --- */}
+      
       <div className="add-car-section">
         <button 
           onClick={handleAddClick}
@@ -216,7 +215,7 @@ function ManageCars() {
         )}
       </div>
 
-      {/* --- 2. Vehicle List --- */}
+      
       <h3 className="section-title">🚗 Current Fleet ({vehicles.length})</h3>
       
       <table className="car-list-table">
@@ -541,10 +540,10 @@ function Status() {
                 <div 
                     style={getBarStyle(width, color)}
                 >
-                    {/* Text is rendered inside the bar if wide enough */}
+                    
                     {textIsInside && <span style={textInsideStyle}>{valueText}</span>}
                 </div>
-                {/* Text is rendered outside/overlay if the bar is too small */}
+                
                 {!textIsInside && <span style={textOutsideStyle}>{valueText}</span>}
             </div>
         </div>
@@ -558,7 +557,7 @@ function Status() {
       <h3 style={headerStyle}>📊 Fleet and Reservation Status</h3>
       <div style={barContainerStyle}>
 
-        {/* 1. Total Vehicles */}
+        
         <Bar 
             label="Total Vehicles in Fleet" 
             value={status.total_vehicles} 
@@ -567,7 +566,7 @@ function Status() {
             unit="Vehicles" 
         />
 
-        {/* 2. Total Users */}
+        
         <Bar 
             label="Total Registered Users" 
             value={status.total_users} 
@@ -576,7 +575,7 @@ function Status() {
             unit="Users" 
         />
         
-        {/* 3. Active Reservations */}
+        
         <Bar 
             label={`Active Reservations (Out of ${totalReservations} Total)`}
             value={status.active_reservations} 
@@ -585,7 +584,7 @@ function Status() {
             unit="Active" 
         />
 
-        {/* 4. Pending Reservations */}
+        
         <Bar 
             label="Pending Reservations" 
             value={status.pending_reservations} 
@@ -594,7 +593,7 @@ function Status() {
             unit="Pending" 
         />
         
-        {/* 5. Reservation Totals (Non-bar metric) */}
+        
         <div style={{
             marginTop: '30px',
             paddingTop: '20px',

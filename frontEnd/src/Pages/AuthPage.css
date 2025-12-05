@@ -301,7 +301,6 @@
   opacity: 0.8;
 }
 
-/* Responsive Design */
 @media (max-width: 768px) {
   .auth-card {
     flex-direction: column;

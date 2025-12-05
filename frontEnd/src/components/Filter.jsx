@@ -9,8 +9,8 @@ export default function Filter({ filters, setFilters }) {
     borderRadius: "8px",
     outline: "none",
     transition: "border-color 0.2s",
-    flex: "2 2 220px",             // slightly wider
-    fontSize: "1.5rem",            // bigger text
+    flex: "2 2 220px",
+    fontSize: "1.5rem",
   };
 
 

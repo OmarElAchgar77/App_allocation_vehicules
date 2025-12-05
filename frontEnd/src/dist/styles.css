@@ -21,13 +21,13 @@ body {
   padding: 0 2.5rem !important;
 }
 
-/* Firefox */
+ 
 * {
   scrollbar-width: thin;
   scrollbar-color: #29476d #ffffff;
 }
 
-/* Chrome, Edge and Safari */
+ 
 *::-webkit-scrollbar {
   width: 10px;
   width: 10px;
@@ -2076,4 +2076,4 @@ footer {
 .contact-div__form form button:hover {
   box-shadow: 0 10px 15px 0 rgba(255, 83, 48, 0.6);
   background-color: #fa4226;
-}/*# sourceMappingURL=styles.css.map */
+} 

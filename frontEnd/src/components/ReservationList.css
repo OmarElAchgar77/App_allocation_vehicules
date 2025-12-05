@@ -1,7 +1,7 @@
-/* Use the CSS variable defined in the React component for the theme color */
-/* :root scope ensures the variable is available */
+ 
+ 
 :root {
-    --theme-color: #29476d; /* Default fallback color */
+    --theme-color: #29476d;  
     --primary-color: var(--theme-color);
     --light-gray: #f8f9fa;
     --border-color: #dee2e6;
@@ -10,7 +10,7 @@
     --danger-color: #dc3545;
 }
 
-/* --- Global Container and Typography --- */
+ 
 .reservation-list-container {
     width: 100%;
     max-width: 900px;
@@ -27,7 +27,7 @@
     margin-bottom: 25px;
 }
 
-/* --- Card Styles --- */
+ 
 .reservation-card {
     background-color: white;
     border: 1px solid var(--border-color);
@@ -37,7 +37,7 @@
     padding: 20px;
 }
 
-/* --- Card Header and Status Badge --- */
+ 
 .reservation-card .card-header {
     display: flex;
     justify-content: space-between;
@@ -73,12 +73,12 @@
     background-color: var(--danger-color);
 }
 
-/* --- Card Body Layout (Image and Details) --- */
+ 
 .reservation-card .card-body {
     display: flex;
-    padding: 0; /* Removed padding from here */
+    padding: 0;  
     align-items: flex-start;
-    border-bottom: none; /* Already handled by card-header */
+    border-bottom: none;  
 }
 
 .reservation-card .vehicle-image {
@@ -86,52 +86,52 @@
     height: 100px; 
     object-fit: cover;
     border-radius: 8px;
-    margin-right: 25px; /* Increased margin for spacing */
+    margin-right: 25px;  
     flex-shrink: 0;
     border: 1px solid #ddd;
 }
 
-/* --- THE DETAILS BAR (.details) --- */
+ 
 .reservation-card .details {
     flex-grow: 1; 
     display: grid;
     grid-template-columns: 1fr 1fr; 
-    gap: 12px 30px; /* Increased gap */
+    gap: 12px 30px;  
     align-items: center;
     padding-right: 10px;
 }
 
-/* Style for each detail line (the <p> tags) */
+ 
 .reservation-card .details p {
     margin: 0;
     font-size: 16px; 
     color: #555;
-    display: flex; /* Helps align icon/text */
+    display: flex;  
     align-items: center;
 }
 
 .reservation-card .details p strong {
-    color: #343a40; /* Darker key text */
+    color: #343a40;  
     font-weight: 600;
     margin-right: 5px;
 }
 
-/* --- Footer for Total Price --- */
+ 
 .reservation-card .card-footer {
     padding: 15px 0 0;
     margin-top: 15px;
-    border-top: 1px dashed var(--border-color); /* Dashed line separator */
+    border-top: 1px dashed var(--border-color);  
     text-align: right;
 }
 
 .reservation-card .total-price {
-    font-size: 20px; /* Even bigger font for the total price */
-    font-weight: 800; /* Extra bold */
+    font-size: 20px;  
+    font-weight: 800;  
     color: var(--primary-color);
     margin: 0;
 }
 
-/* --- Loading and Error Messages --- */
+ 
 .loading, .error, .no-reservations {
     padding: 20px;
     text-align: center;
