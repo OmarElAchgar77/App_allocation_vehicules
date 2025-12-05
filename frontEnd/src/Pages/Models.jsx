@@ -3,22 +3,8 @@ import HeroPages from "../components/HeroPages";
 import CarCard from "../components/CarCard";
 import Filter from "../components/Filter";
 
-import CarImg1 from "../images/cars-big/audi-box.png";
-import CarImg2 from "../images/cars-big/golf6-box.png";
-import CarImg3 from "../images/cars-big/toyota-box.png";
-import CarImg4 from "../images/cars-big/bmw-box.png";
-import CarImg5 from "../images/cars-big/benz-box.png";
-import CarImg6 from "../images/cars-big/passat-box.png";
 import React, { useState, useEffect } from "react";
-
-const mockCarData = [
-  { id: 1, name: "Audi A1", price: 45, make: "Audi", doors: "4/5", transmission: "Manual", fuel: "Diesel", img: CarImg1 },
-  { id: 2, name: "VW Golf 6", price: 37, make: "VW", doors: "4/5", transmission: "Manual", fuel: "Diesel", img: CarImg2 },
-  { id: 3, name: "Toyota Camry", price: 30, make: "Camry", doors: "4/5", transmission: "Manual", fuel: "Diesel", img: CarImg3 },
-  { id: 4, name: "BMW 320", price: 35, make: "ModernLine", doors: "4/5", transmission: "Manual", fuel: "Diesel", img: CarImg4 },
-  { id: 5, name: "Mercedes Benz GLK", price: 50, make: "Benz GLK", doors: "4/5", transmission: "Manual", fuel: "Diesel", img: CarImg5 },
-  { id: 6, name: "VW Passat CC", price: 25, make: "CC", doors: "4/5", transmission: "Manual", fuel: "Diesel", img: CarImg6 },
-];
+import apiClient from '../api/apiClient';
 
 export default function Models() {
   const [carModels, setCarModels] = useState([]);
@@ -26,21 +12,47 @@ export default function Models() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchModels = () => {
-      setTimeout(() => {
-        setCarModels(mockCarData);
+    const fetchModels = async () => {
+      // 1. Set loading state to true (already done by initial state)
+      setLoading(true);
+
+      try {
+        // 2. Await the successful API call to get the response object
+        const response = await apiClient.get('/vehicles');
+        
+        // 3. Set carModels state to the actual data array from the response
+        // This is the crucial fix: you must wait for the data before setting the state.
+        if (Array.isArray(response.data)) {
+          setCarModels(response.data);
+        } else {
+          // Handle case where API response.data might not be an array
+          console.error("API did not return an array:", response.data);
+          setCarModels([]); 
+        }
+
+      } catch (error) {
+        console.error('Error fetching data:', error);
+        // Optionally show an error message to the user here
+        setCarModels([]); // Ensure it remains an array on error
+      } finally {
+        // 4. Set loading state to false
         setLoading(false);
-      }, 500);
+      }
     };
 
     fetchModels();
-  }, []);
+  }, []); // Empty dependency array ensures this runs only once on component mount
 
   const filteredModels = carModels.filter((car) => {
-    const matchesName = car.name.toLowerCase().includes(filters.name.toLowerCase());
-    const matchesMinPrice = filters.minPrice ? car.price >= Number(filters.minPrice) : true;
-    const matchesMaxPrice = filters.maxPrice ? car.price <= Number(filters.maxPrice) : true;
-    const matchesDate = filters.date ? car.date === filters.date : true;
+    // Ensure car and necessary properties exist before trying to access them
+    if (!car || !car.brand || car.price_per_day === undefined) return false;
+
+    const matchesName = car.brand.toLowerCase().includes(filters.name.toLowerCase());
+    const matchesMinPrice = filters.minPrice ? car.price_per_day >= Number(filters.minPrice) : true;
+    const matchesMaxPrice = filters.maxPrice ? car.price_per_day <= Number(filters.maxPrice) : true;
+    // Note: Comparing full timestamps/dates with '===' might be too strict. 
+    // You might need to adjust the date comparison logic based on how dates are stored in your API.
+    const matchesDate = filters.date ? car.created_at.includes(filters.date) : true;
 
     return matchesName && matchesMinPrice && matchesMaxPrice && matchesDate;
   });
@@ -62,9 +74,6 @@ export default function Models() {
     <>
       <section className="models-section" id="models-page-container">
         <HeroPages name="Vehicle Models" child={<Filter filters={filters} setFilters={setFilters} />}/>
-        
-
-
         
          <div id="models-grid" style={modelsDivStyle}>
           {loading ? (
