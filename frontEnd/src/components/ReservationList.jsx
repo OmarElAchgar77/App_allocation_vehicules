@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './ReservationList.css'; // Import the CSS file
-import {apiAdmin, apiClient} from '../api/api'
+import {BASE_STORAGE_URL, apiClient} from '../api/api'
+
 const THEME_COLOR = "#29476d";
 
 function ReservationList() {
@@ -52,7 +53,7 @@ function ReservationList() {
                     <div className="card-body">
                         {reservation.vehicle.image && (
                             <img 
-                                src={reservation.vehicle.image} 
+                                src={`${BASE_STORAGE_URL}${reservation.vehicle.image}`} 
                                 alt={`${reservation.vehicle.brand} ${reservation.vehicle.model}`} 
                                 className="vehicle-image"
                             />
