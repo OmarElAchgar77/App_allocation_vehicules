@@ -1,16 +1,26 @@
-import {apiClient, apiAdmin} from '../api/api';
+import { apiClient, apiAdmin } from '../api/api';
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
+// Import the new ReservationForm component
+import ReservationForm from './ReservationForm'; 
+
 const themeColor = "#29476d";
+
 export default function CarCard({ car }) {
   const navigate = useNavigate();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  // State to control the visibility of the reservation form
+  const [showReservationForm, setShowReservationForm] = useState(false); 
+
+  useEffect(() => {
+    checkAuthStatus();
+  }, []);
 
   const checkAuthStatus = () => {
-    const token = localStorage.getItem('auth_token');
+    const token = localStorage.getItem('userToken');
     if (token) {
         apiClient.defaults.headers.common['Authorization'] = `Bearer ${token}`;
         setIsAuthenticated(true);
@@ -20,15 +30,23 @@ export default function CarCard({ car }) {
   };
 
   const handleRent = () =>{
+    // If not authenticated, prompt login and navigate.
     if(!isAuthenticated){
-      toast.error("Log In Fisrt");
-      navigate('/auth');
-    }else{
-      
+      toast.error("Log In First");
+      // navigate('/auth'); // Uncomment this line if you want to redirect
+      return; // Stop execution if not authenticated
     }
+    // Toggle the visibility of the reservation form
+    setShowReservationForm(!showReservationForm); 
   }
 
+  // Function to close the form (will be passed to ReservationForm)
+  const handleCloseForm = () => {
+    setShowReservationForm(false);
+  };
+
   const styles = {
+    // ... (Keep your existing styles object)
     card: {
       width: 420,
       borderRadius: 12,
@@ -133,51 +151,77 @@ export default function CarCard({ car }) {
       color: "#475569",
       fontSize: 13,
     },
+    // New style for the form container (optional: for centering/overlay)
+    formContainer: {
+      position: 'fixed',
+      top: 0,
+      left: 0,
+      width: '100%',
+      height: '100%',
+      background: 'rgba(0, 0, 0, 0.5)',
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      zIndex: 1000,
+    },
   };
 
   const name = car.brand + " " + car.model;
 
   return (
-    <article style={styles.card} aria-labelledby={`car-${car.id}-title`}>
-      <div style={styles.top}>
-        {car.image ? (
-          <img src={car.image} alt={`${car.description} ${name}`} style={styles.img} />
-        ) : (
-          <div style={{ textAlign: "center", color: "#94a3b8" }}>No image</div>
-        )}
-
-        <div style={styles.priceBadge}>
-          {car.price_per_day} DH
-          <span style={{ fontWeight: 500, fontSize: 12, marginLeft: 6 }}>/day</span>
-        </div>
-      </div>
-
-      <div style={styles.content}>
-        <div style={styles.titleRow}>
-          <div>
-            <h3 id={`car-${car.id}-title`} style={styles.name}>
-              {name}
-            </h3>
-            <p style={styles.make}>{car.description}</p>
+    <>
+      <article style={styles.card} aria-labelledby={`car-${car.id}-title`}>
+        {/* ... (Keep the existing card structure) */}
+        <div style={styles.top}>
+          {car.image ? (
+            <img src={car.image} alt={`${car.description} ${name}`} style={styles.img} />
+          ) : (
+            <div style={{ textAlign: "center", color: "#94a3b8" }}>No image</div>
+          )}
+          <div style={styles.priceBadge}>
+            {car.price_per_day} DH
+            <span style={{ fontWeight: 500, fontSize: 12, marginLeft: 6 }}>/day</span>
           </div>
         </div>
 
-        <div style={styles.specs}>
-          
-          <span style={styles.chip}>⚙️ {car.model}</span>
-          <span style={styles.chip}>🗓️ {car.year}</span>
-        </div>
+        <div style={styles.content}>
+          <div style={styles.titleRow}>
+            <div>
+              <h3 id={`car-${car.id}-title`} style={styles.name}>
+                {name}
+              </h3>
+              <p style={styles.make}>{car.description}</p>
+            </div>
+          </div>
 
-        <div style={styles.actions}>
-          <button
-            style={styles.btnPrimary}
-            onClick={handleRent}
-            aria-label={`Rent ${name}`}
-          >
-            Resirve
-          </button>
+          <div style={styles.specs}>
+            <span style={styles.chip}>⚙️ {car.model}</span>
+            <span style={styles.chip}>🗓️ {car.year}</span>
+          </div>
+
+          <div style={styles.actions}>
+            <button
+              style={styles.btnPrimary}
+              onClick={handleRent} // This now toggles the form
+              aria-label={`Reserve ${name}`}
+            >
+              Resirve
+            </button>
+          </div>
         </div>
-      </div>
-    </article>
+      </article>
+
+      {/* Conditionally render the reservation form */}
+      {showReservationForm && (
+        <div style={styles.formContainer} onClick={handleCloseForm}>
+          <ReservationForm 
+            car={car} 
+            onClose={handleCloseForm} 
+            // Stop click propagation so clicking inside the form doesn't close it
+            onClick={(e) => e.stopPropagation()} 
+          />
+        </div>
+      )}
+    </>
   );
 }
