@@ -38,7 +38,7 @@ function ReservationList() {
 
     return (
         <div className="reservation-list-container" style={{ '--theme-color': THEME_COLOR }}>
-            <h2 className="list-title">My Vehicle Reservations</h2>
+            <h2 className="list-title">Mes réservations</h2>
             {reservations.map((reservation) => (
                 <div key={reservation.id} className="reservation-card">
                     <div className="card-header">
@@ -62,7 +62,7 @@ function ReservationList() {
                             
                             <p>
                                 <span style={{ marginRight: '8px' }} role="img" aria-label="ID">#️⃣</span>
-                                <strong>Reservation ID:</strong> {reservation.id}
+                                <strong>ID:</strong> {reservation.id}
                             </p>
                             
                             
@@ -74,7 +74,7 @@ function ReservationList() {
                             
                             <p>
                                 <span style={{ marginRight: '8px' }} role="img" aria-label="Price">💲</span>
-                                <strong>Price/Day:</strong> {reservation.vehicle.price_per_day} DH
+                                <strong>Prix/Jour:</strong> {reservation.vehicle.price_per_day} DH
                             </p>
                             
                             

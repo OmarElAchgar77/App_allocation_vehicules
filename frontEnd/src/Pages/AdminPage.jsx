@@ -153,12 +153,12 @@ function ManageCars() {
   
   const renderCarForm = () => (
     <form onSubmit={handleSubmit} className="add-car-form-grid">
-      <h4 className="form-title">{carData.id ? '✏️ Edit Car Details' : '➕ Add New Car'}</h4>
+      <h4 className="form-title">{carData.id ? '✏️ Modifie information de Vehicle' : '➕ Ajouter Nouveaux Vehicle'}</h4>
       
       <input name="brand" value={carData.brand} onChange={handleChange} placeholder="Brand" required />
       <input name="model" value={carData.model} onChange={handleChange} placeholder="Model" required />
-      <input name="year" value={carData.year} onChange={handleChange} placeholder="Year" type="number" required />
-      <input name="price_per_day" value={carData.price_per_day} onChange={handleChange} placeholder="Price Per Day" type="number" required />
+      <input name="year" value={carData.year} onChange={handleChange} placeholder="Anne" type="number" required />
+      <input name="price_per_day" value={carData.price_per_day} onChange={handleChange} placeholder="Prix/Jour" type="number" required />
 
       <div className="file-input-wrapper">
         <label htmlFor="car-image-upload">
@@ -179,7 +179,7 @@ function ManageCars() {
 
       <div className="form-actions">
         <button type="submit" className={`btn ${carData.id ? 'btn-update' : 'btn-add'}`}>
-          {carData.id ? 'Save Changes' : 'Add Car'}
+          {carData.id ? 'Save Changes' : 'Ajouter Vehicle'}
         </button>
         
         <button type="button" onClick={resetForm} className="btn btn-cancel">
@@ -201,7 +201,7 @@ function ManageCars() {
           onClick={handleAddClick}
           className="btn btn-primary"
         >
-          ➕ Add New Vehicle
+          ➕ Ajouter Nouveaux Vehicle
         </button>
         
         {isModalOpen && ReactDOM.createPortal(
@@ -216,7 +216,7 @@ function ManageCars() {
       </div>
 
       
-      <h3 className="section-title">🚗 Current Fleet ({vehicles.length})</h3>
+      <h3 className="section-title">🚗 Flotte ({vehicles.length})</h3>
       
       <table className="car-list-table">
         <thead>
@@ -224,8 +224,8 @@ function ManageCars() {
             <th>ID</th>
             <th>Image</th>
             <th>Details</th>
-            <th>Year</th>
-            <th>Price/Day</th>
+            <th>Anne</th>
+            <th>Prix/Jour</th>
             <th>Actions</th>
           </tr>
         </thead>
@@ -330,10 +330,10 @@ function ListCarReservations() {
 
   return (
     <div className="admin-reservation-list">
-      <h3 className="admin-list-title">📋 Pending & Current Reservations</h3>
+      <h3 className="admin-list-title">📋 Réservations en cours & en attente</h3>
       
       {reservations.length === 0 ? (
-        <p className="no-reservations">No reservations found.</p>
+        <p className="no-reservations">Aucune réservation trouvée.</p>
       ) : (
         <table className="reservation-table">
           <thead>
@@ -363,7 +363,7 @@ function ListCarReservations() {
                 <td>
                   <strong>{res.user.name}</strong><br />
                   <small>{res.user.email}</small>
-                  <a href={res.drivers_license} target="_blank" rel="noopener noreferrer" className="license-link">View License 💳</a>
+                  <a href={res.drivers_license} target="_blank" rel="noopener noreferrer" className="license-link">Afficher le permis 💳</a>
                 </td>
                 <td>
                   {res.start_date_local} to {res.end_date_local}
@@ -505,9 +505,9 @@ function Status() {
     fetchStatus();
   }, []);
 
-  if (loading) return <p>Loading system status...</p>;
+  if (loading) return <p>État du système de chargement...</p>;
   if (error) return <p style={{ color: dangerColor }}>Error: {error}</p>;
-  if (!status) return <p>No status data available.</p>;
+  if (!status) return <p>Aucune donnée d'état disponible.</p>;
 
 
    
@@ -558,7 +558,7 @@ function Status() {
 
         
         <Bar 
-            label="Total Vehicles in Fleet" 
+            label="véhicules" 
             value={status.total_vehicles} 
             color={primaryColor} 
             width={vehicleWidth} 
@@ -567,7 +567,7 @@ function Status() {
 
         
         <Bar 
-            label="Total Registered Users" 
+            label="Utilisateurs" 
             value={status.total_users} 
             color={successColor} 
             width={userWidth} 
@@ -576,7 +576,7 @@ function Status() {
         
         
         <Bar 
-            label={`Active Reservations (Out of ${totalReservations} Total)`}
+            label={`Réservations actives`}
             value={status.active_reservations} 
             color={warningColor} 
             width={activeResWidth} 
@@ -585,7 +585,7 @@ function Status() {
 
         
         <Bar 
-            label="Pending Reservations" 
+            label="Réservations en attente" 
             value={status.pending_reservations} 
             color={dangerColor} 
             width={pendingResWidth} 
@@ -602,7 +602,7 @@ function Status() {
             color: labelTextColor,
             textAlign: 'center',
         }}>
-            Total Reservations Handled: <span style={{ color: primaryColor }}>{totalReservations}</span>
+            Nombre total de réservations traitées: <span style={{ color: primaryColor }}>{totalReservations}</span>
         </div>
         
       </div>
@@ -611,7 +611,7 @@ function Status() {
 }
 
 function AdminPage() {
-  const [activeTab, setActiveTab] = useState('ManageCars');
+  const [activeTab, setActiveTab] = useState('status');
 
   const renderContent = () => {
     switch (activeTab) {
@@ -631,13 +631,13 @@ function AdminPage() {
     <ToastContainer />
       <nav className="admin-nav">
         <button onClick={() => setActiveTab('status')} className={activeTab === 'status' ? 'active' : ''}>
-          📊 Status
+          📊 Statut
         </button>
         <button onClick={() => setActiveTab('listReservations')} className={activeTab === 'listReservations' ? 'active' : ''}>
-          📋 List Car Reservations
+          📋 Liste des réservations
         </button>
         <button onClick={() => setActiveTab('ManageCars')} className={activeTab === 'ManageCars' ? 'active' : ''}>
-          ⚙️ Vehicles Managing
+          ⚙️ Gestion des véhicules
         </button>
       </nav>
       <div className="admin-content">
