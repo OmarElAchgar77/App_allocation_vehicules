@@ -119,7 +119,7 @@ function Navbar() {
             <li>
               {" "}
               <Link className="testi-link" to="/testimonials">
-                Testimonials
+                Témoignages
               </Link>
             </li>
             <li>
