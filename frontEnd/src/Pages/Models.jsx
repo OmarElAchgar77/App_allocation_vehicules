@@ -13,46 +13,46 @@ export default function Models() {
 
   useEffect(() => {
     const fetchModels = async () => {
-      // 1. Set loading state to true (already done by initial state)
+       
       setLoading(true);
 
       try {
-        // 2. Await the successful API call to get the response object
+         
         const response = await apiClient.get('/vehicles');
         console.log(response.data);
         
-        // 3. Set carModels state to the actual data array from the response
-        // This is the crucial fix: you must wait for the data before setting the state.
+         
+         
         if (Array.isArray(response.data)) {
           setCarModels(response.data);
         } else {
-          // Handle case where API response.data might not be an array
+           
           console.error("API did not return an array:", response.data);
           setCarModels([]); 
         }
 
       } catch (error) {
         console.error('Error fetching data:', error);
-        // Optionally show an error message to the user here
-        setCarModels([]); // Ensure it remains an array on error
+         
+        setCarModels([]);  
       } finally {
-        // 4. Set loading state to false
+         
         setLoading(false);
       }
     };
 
     fetchModels();
-  }, []); // Empty dependency array ensures this runs only once on component mount
+  }, []);  
 
   const filteredModels = carModels.filter((car) => {
-    // Ensure car and necessary properties exist before trying to access them
+     
     if (!car || !car.brand || car.price_per_day === undefined) return false;
 
     const matchesName = car.brand.toLowerCase().includes(filters.name.toLowerCase());
     const matchesMinPrice = filters.minPrice ? car.price_per_day >= Number(filters.minPrice) : true;
     const matchesMaxPrice = filters.maxPrice ? car.price_per_day <= Number(filters.maxPrice) : true;
-    // Note: Comparing full timestamps/dates with '===' might be too strict. 
-    // You might need to adjust the date comparison logic based on how dates are stored in your API.
+     
+     
     const matchesDate = filters.date ? car.created_at.includes(filters.date) : true;
 
     return matchesName && matchesMinPrice && matchesMaxPrice && matchesDate;
@@ -74,7 +74,7 @@ export default function Models() {
   return (
     <>
       <section className="models-section" id="models-page-container">
-        <HeroPages name="Vehicle Models" child={<Filter filters={filters} setFilters={setFilters} />}/>
+        <HeroPages name="Vehicles" child={<Filter filters={filters} setFilters={setFilters} />}/>
         
          <div id="models-grid" style={modelsDivStyle}>
           {loading ? (

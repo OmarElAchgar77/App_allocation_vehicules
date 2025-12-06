@@ -1,4 +1,3 @@
-// AdminLogin.jsx
 import React, { useState } from 'react';
 import {apiClient, apiAdmin} from '../api/api';
 import './AdminPage.css';

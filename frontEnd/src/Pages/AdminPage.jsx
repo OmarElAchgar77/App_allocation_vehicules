@@ -1,6 +1,6 @@
-// AdminPage.jsx
+ 
 import React, { useState, useEffect } from 'react';
-import {apiClient, apiAdmin} from '../api/api';
+import {BASE_STORAGE_URL, apiAdmin} from '../api/api';
 import { ToastContainer, toast } from 'react-toastify';
 import ReactDOM from 'react-dom';
 import './AdminPage.css'; 
@@ -11,9 +11,9 @@ function ManageCars() {
   const [error, setError] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   
-  // State for the Add/Edit form
+   
   const [carData, setCarData] = useState({
-    id: null, // Used for modification (PUT)
+    id: null,  
     brand: '',
     model: '',
     year: '',
@@ -22,7 +22,7 @@ function ManageCars() {
   });
   const [carImage, setCarImage] = useState(null); 
 
-  // --- Data Fetching ---
+   
   const fetchVehicles = async () => {
     try {
       const response = await apiAdmin.get("/vehicles");
@@ -40,7 +40,7 @@ function ManageCars() {
     fetchVehicles();
   }, []);
 
-  // --- Form Handlers ---
+   
   const handleChange = (e) => {
     setCarData({ ...carData, [e.target.name]: e.target.value });
   };
@@ -59,14 +59,14 @@ function ManageCars() {
         image: null,
     });
     setCarImage(null);
-    // document.getElementById('car-image-upload').value = null; // Removed, unnecessary
-    setIsModalOpen(false); // <--- This closes the modal
+     
+    setIsModalOpen(false);  
   };
 
   const handleAddClick = () => {
-    // 1. Reset state data
+     
     setCarData({
-        id: null, // Crucial: sets ID to null for a POST request
+        id: null,  
         brand: '',
         model: '',
         year: '',
@@ -75,7 +75,7 @@ function ManageCars() {
     });
     setCarImage(null);
 
-    // 2. Open the modal
+     
     setIsModalOpen(true);
     };
   
@@ -87,14 +87,14 @@ function ManageCars() {
             model: vehicle.model,
             year: vehicle.year,
             price_per_day: vehicle.price_per_day,
-            // vehicle.image is the correct full URL from the fixed API response
+             
             image: vehicle.image, 
         });
-        setCarImage(null); // IMPORTANT: Clear the file input so no accidental image upload happens
+        setCarImage(null);  
         setIsModalOpen(true);
     };
 
-    // --- CRUD Operations ---
+     
   
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -103,14 +103,14 @@ function ManageCars() {
     const endpoint = isEditing ? `/vehicles/${carData.id}` : "/vehicles";
     const method = apiAdmin.post;
     
-    // Build FormData
+     
     const formData = new FormData();
     formData.append('brand', carData.brand);
     formData.append('model', carData.model);
     formData.append('year', carData.year);
     formData.append('price_per_day', carData.price_per_day);
     
-    // IMPORTANT for PUT: Laravel often requires _method=PUT/PATCH for file uploads
+     
     if (isEditing) {
         formData.append('_method', 'PUT'); 
     }
@@ -126,7 +126,7 @@ function ManageCars() {
       
       toast.success(`Car ${isEditing ? 'updated' : 'added'} successfully!`);
       resetForm();
-      fetchVehicles(); // Refresh the list
+      fetchVehicles();  
       
     } catch (error) {
       const msg = error.response?.data?.message || 'Server error';
@@ -270,12 +270,12 @@ function ListCarReservations() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // --- Fetch Data ---
+   
   useEffect(() => {
     const fetchReservations = async () => {
       try {
         const response = await apiAdmin.get("/admin/reservations");
-        // Ensure reservation dates are parsed as local strings, not UTC
+         
         const formattedReservations = response.data.map(res => ({
             ...res,
             start_date_local: new Date(res.start_date).toLocaleDateString(),
@@ -295,9 +295,9 @@ function ListCarReservations() {
     fetchReservations();
   }, []);
 
-  // --- Action Handler ---
+   
   const handleAction = async (id, action) => {
-    // action should be 'approve' or 'reject'
+     
     const statusUpdate = action === 'approve' ? 'approved' : 'rejected';
     
     if (!window.confirm(`Are you sure you want to ${action} reservation ID ${id}?`)) {
@@ -309,7 +309,7 @@ function ListCarReservations() {
           status: statusUpdate 
       });
 
-      // Update the local state upon success
+       
       setReservations(prevReservations => 
         prevReservations.map(res => 
           res.id === id ? { ...res, status: statusUpdate } : res
@@ -324,7 +324,7 @@ function ListCarReservations() {
     }
   };
 
-  // --- Render Logic ---
+   
   if (loading) return <p className="admin-loading">Loading reservations...</p>;
   if (error) return <p className="admin-error">Error: {error}</p>;
 
@@ -353,7 +353,7 @@ function ListCarReservations() {
                 <td>{res.id}</td>
                 <td>
                   <div className="car-cell">
-                    <img src={res.vehicle.image} alt={`${res.vehicle.brand} ${res.vehicle.model}`} className="car-image-thumb" />
+                    <img src={`${BASE_STORAGE_URL}${res.vehicle.image}`} alt={`${res.vehicle.brand} ${res.vehicle.model}`} className="car-image-thumb" />
                     <div>
                         <strong>{res.vehicle.brand} {res.vehicle.model}</strong>
                         <small>({res.vehicle.year})</small>
@@ -411,16 +411,16 @@ function Status() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // --- Inline CSS Styles ---
+   
   const primaryColor = '#007bff';
-  const successColor = '#28aa45'; // Adjusted green
+  const successColor = '#28aa45';  
   const warningColor = '#ffc107';
   const dangerColor = '#dc3545';
   const labelTextColor = '#343a40';
   const subtleGray = '#e9ecef';
   
   const headerStyle = {
-    fontSize: '32px', // Very big header
+    fontSize: '32px',  
     color: labelTextColor,
     marginBottom: '30px',
     paddingBottom: '10px',
@@ -431,21 +431,21 @@ function Status() {
     backgroundColor: '#ffffff',
     borderRadius: '12px',
     padding: '30px',
-    boxShadow: '0 8px 25px rgba(0,0,0,0.1)', // Deeper shadow
+    boxShadow: '0 8px 25px rgba(0,0,0,0.1)',  
   };
   const metricItemStyle = {
     marginBottom: '25px',
   };
   const labelStyle = {
     fontWeight: '700',
-    fontSize: '20px', // Big label font
+    fontSize: '20px',  
     color: labelTextColor,
     marginBottom: '10px',
     display: 'flex',
     justifyContent: 'space-between',
   };
   const barWrapperStyle = {
-    height: '45px', // Taller bars
+    height: '45px',  
     backgroundColor: subtleGray,
     borderRadius: '8px',
     overflow: 'hidden',
@@ -453,7 +453,7 @@ function Status() {
     border: `1px solid ${subtleGray}`,
   };
   
-  // Bar styling utility function
+   
   const getBarStyle = (width, color) => ({
     width: `${width}%`,
     height: '100%',
@@ -461,23 +461,23 @@ function Status() {
     transition: 'width 0.8s ease-in-out',
     display: 'flex',
     alignItems: 'center',
-    minWidth: width > 0 ? '45px' : '0', // Ensures small bar shows color
+    minWidth: width > 0 ? '45px' : '0',  
     paddingLeft: '15px',
     fontSize: '18px',
     fontWeight: 'bold',
   });
 
-  // Text inside the bar
+   
   const textInsideStyle = {
     color: 'white',
     textShadow: '0 1px 2px rgba(0,0,0,0.4)',
   };
 
-  // Text outside the bar (for small values)
+   
   const textOutsideStyle = {
     position: 'absolute',
     top: '0',
-    right: '15px', // Aligns to the right
+    right: '15px',  
     height: '100%',
     display: 'flex',
     alignItems: 'center',
@@ -486,7 +486,7 @@ function Status() {
     fontWeight: 'bold',
   };
   
-  // --- End of Styles ---
+   
 
 
   useEffect(() => {
@@ -510,24 +510,24 @@ function Status() {
   if (!status) return <p>No status data available.</p>;
 
 
-  // --- Logic for Bar Widths ---
+   
   const totalReservations = status.active_reservations + status.pending_reservations;
   
-  // Use a sensible scale for Vehicles and Users (e.g., max of vehicles, users, or 100)
+   
   const maxScale = Math.max(status.total_vehicles, status.total_users, 100); 
 
-  // Calculate widths
+   
   const vehicleWidth = (status.total_vehicles / maxScale) * 100;
   const userWidth = (status.total_users / maxScale) * 100;
 
-  // Reservations are relative to total reservations
+   
   const activeResWidth = totalReservations > 0 ? (status.active_reservations / totalReservations) * 100 : 0;
   const pendingResWidth = totalReservations > 0 ? (status.pending_reservations / totalReservations) * 100 : 0;
   
   
-  // Helper Component for Bar Rendering
+   
   const Bar = ({ label, value, color, width, unit }) => {
-    const textIsInside = width > 30; // Show text inside if bar is wide enough
+    const textIsInside = width > 30;  
     const valueText = `${value} ${unit}`;
 
     return (
@@ -549,8 +549,7 @@ function Status() {
         </div>
     );
   };
-  // --- End of Logic ---
-
+  
 
   return (
     <div>
@@ -638,7 +637,7 @@ function AdminPage() {
           📋 List Car Reservations
         </button>
         <button onClick={() => setActiveTab('ManageCars')} className={activeTab === 'ManageCars' ? 'active' : ''}>
-          ➕ Add Car
+          ⚙️ Vehicles Managing
         </button>
       </nav>
       <div className="admin-content">

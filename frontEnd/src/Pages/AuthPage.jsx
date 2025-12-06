@@ -80,7 +80,7 @@ const AuthPage = () => {
           }).then(function (response) {
 
               const token = response.data.token; 
-              localStorage.setItem('auth_token', token);
+              localStorage.setItem('userToken', token);
               apiClient.defaults.headers.common['Authorization'] = `Bearer ${token}`;
               window.dispatchEvent(new Event('authChange'));
               setIsAuthenticated(true);
@@ -106,7 +106,7 @@ const AuthPage = () => {
               password: formData.password
           }).then(function (response) {
               toast.success(`Registration successful! Please Sign In.`);
-              setIsLogin(true); // Switch to login view
+              setIsLogin(true);
               setFormData({ name: '', email: '', password: '', confirmPassword: '' });
           }).catch(function (error) {
               toast.error(`Registration failed!`);
