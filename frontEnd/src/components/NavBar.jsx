@@ -10,7 +10,7 @@ function Navbar() {
   const [nav, setNav] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const checkAuthStatus = () => {
-      const token = localStorage.getItem('auth_token');
+      const token = localStorage.getItem('userToken');
       if (token) {
           apiClient.defaults.headers.common['Authorization'] = `Bearer ${token}`;
           setIsAuthenticated(true);
@@ -19,15 +19,11 @@ function Navbar() {
       }
   };
   
-  // UseEffect now handles initial load AND listens for the event
   useEffect(() => {
-    // Check status on initial load
     checkAuthStatus(); 
 
-    // Add event listener for global state changes
     window.addEventListener('authChange', checkAuthStatus);
 
-    // Clean up the listener when the component unmounts
     return () => {
       window.removeEventListener('authChange', checkAuthStatus);
     };
@@ -37,11 +33,10 @@ function Navbar() {
     setNav(!nav);
   };
   const handleAuth = (e) => {
-    // If user is ALREADY logged in, we want to Log Out
     if (isAuthenticated) {
-        e.preventDefault(); // <--- STOP the Link from going to /auth
+        e.preventDefault();
         
-        apiClient.post('/logout') // [cite: 1] Endpoint /logout
+        apiClient.post('/logout')
         .then(() => {
             toast.success("Signed out successfully");
         })
@@ -49,7 +44,7 @@ function Navbar() {
             console.error("Logout error", err);
         })
         .finally(() => {
-            localStorage.removeItem('auth_token');
+            localStorage.removeItem('userToken');
             localStorage.removeItem('user_data');
             delete apiClient.defaults.headers.common['Authorization'];
             
@@ -118,7 +113,7 @@ function Navbar() {
             <li>
               {" "}
               <Link className="models-link" to="/models">
-                Vehicle Models
+                Vehicles
               </Link>
             </li>
             <li>
