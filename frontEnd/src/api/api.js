@@ -1,5 +1,7 @@
 import axios from 'axios';
 
+export const BASE_STORAGE_URL = 'http://127.0.0.1:8000/storage/';
+
 export const apiClient = axios.create({
   baseURL: 'http://127.0.0.1:8000/api',
   timeout: 10000,
