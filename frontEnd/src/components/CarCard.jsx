@@ -1,6 +1,6 @@
-import { apiClient, apiAdmin } from '../api/api';
+import { apiClient } from '../api/api';
 import { useState, useEffect } from "react";
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -30,23 +30,19 @@ export default function CarCard({ car }) {
   };
 
   const handleRent = () =>{
-    // If not authenticated, prompt login and navigate.
     if(!isAuthenticated){
       toast.error("Log In First");
-      // navigate('/auth'); // Uncomment this line if you want to redirect
-      return; // Stop execution if not authenticated
+      navigate('/auth');
+      return;
     }
-    // Toggle the visibility of the reservation form
     setShowReservationForm(!showReservationForm); 
   }
 
-  // Function to close the form (will be passed to ReservationForm)
   const handleCloseForm = () => {
     setShowReservationForm(false);
   };
 
   const styles = {
-    // ... (Keep your existing styles object)
     card: {
       width: 420,
       borderRadius: 12,
@@ -151,7 +147,6 @@ export default function CarCard({ car }) {
       color: "#475569",
       fontSize: 13,
     },
-    // New style for the form container (optional: for centering/overlay)
     formContainer: {
       position: 'fixed',
       top: 0,
@@ -171,7 +166,6 @@ export default function CarCard({ car }) {
   return (
     <>
       <article style={styles.card} aria-labelledby={`car-${car.id}-title`}>
-        {/* ... (Keep the existing card structure) */}
         <div style={styles.top}>
           {car.image ? (
             <img src={car.image} alt={`${car.description} ${name}`} style={styles.img} />
@@ -202,22 +196,21 @@ export default function CarCard({ car }) {
           <div style={styles.actions}>
             <button
               style={styles.btnPrimary}
-              onClick={handleRent} // This now toggles the form
+              onClick={handleRent}
               aria-label={`Reserve ${name}`}
             >
               Resirve
             </button>
           </div>
         </div>
+        <ToastContainer />
       </article>
 
-      {/* Conditionally render the reservation form */}
       {showReservationForm && (
         <div style={styles.formContainer} onClick={handleCloseForm}>
           <ReservationForm 
             car={car} 
             onClose={handleCloseForm} 
-            // Stop click propagation so clicking inside the form doesn't close it
             onClick={(e) => e.stopPropagation()} 
           />
         </div>
