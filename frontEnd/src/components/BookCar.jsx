@@ -1,458 +1,270 @@
-import { useEffect, useState } from "react";
-import CarAudi from "../images/cars-big/audia1.jpg";
-import CarGolf from "../images/cars-big/golf6.jpg";
-import CarToyota from "../images/cars-big/toyotacamry.jpg";
-import CarBmw from "../images/cars-big/bmw320.jpg";
-import CarMercedes from "../images/cars-big/benz.jpg";
-import CarPassat from "../images/cars-big/passatcc.jpg";
+import { useState, useEffect, useRef } from "react"; 
+import { apiClient } from '../api/api'; 
+import { toast, ToastContainer } from 'react-toastify'; 
+import { useNavigate } from 'react-router-dom';
+
+const calculateTotalPrice = (startDate, endDate, pricePerDay) => {
+    if (!startDate || !endDate || pricePerDay === undefined || pricePerDay === null) return 0;
+    
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+    
+    if (isNaN(start) || isNaN(end) || start > end) return 0;
+
+    const timeDiff = end.getTime() - start.getTime();
+    
+
+    const dayCount = Math.ceil(timeDiff / (1000 * 3600 * 24)) + 1; 
+
+    return dayCount > 0 ? dayCount * pricePerDay : 0;
+};
+
 
 function BookCar() {
-  const [modal, setModal] = useState(false); //  class - active-modal
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const navigate = useNavigate();
+    const checkAuthStatus = () => {
+        const token = localStorage.getItem('userToken');
+        if (token) {
+            apiClient.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+            setIsAuthenticated(true);
+        } else {
+            setIsAuthenticated(false);
+        }
+    };
+    
+    const fileInputRef = useRef(null);
 
-  // booking car
-  const [carType, setCarType] = useState("");
-  const [pickUp, setPickUp] = useState("");
-  const [dropOff, setDropOff] = useState("");
-  const [pickTime, setPickTime] = useState("");
-  const [dropTime, setDropTime] = useState("");
-  const [carImg, setCarImg] = useState("");
+    const [availableCars, setAvailableCars] = useState([]);
+    const [locations] = useState([
+        "Agadir", "Marakesh", "Casa Blanca", "Tange", "Fes", "Sawira"
+    ]);
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // modal infos
-  const [name, setName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [phone, setPhone] = useState("");
-  const [age, setAge] = useState("");
-  const [email, setEmail] = useState("");
-  const [address, setAddress] = useState("");
-  const [city, setCity] = useState("");
-  const [zipcode, setZipCode] = useState("");
+    const [carType, setCarType] = useState("");
+    const [pickUp, setPickUp] = useState("");
+    const [dropOff, setDropOff] = useState("");
+    const [pickTime, setPickTime] = useState("");
+    const [dropTime, setDropTime] = useState("");
+    
+    const [licenseFile, setLicenseFile] = useState(null); 
+    const [licenseFileName, setLicenseFileName] = useState("");
 
-  // taking value of modal inputs
-  const handleName = (e) => {
-    setName(e.target.value);
-  };
+    useEffect(() => {
+        fetchAvailableCars();
+        checkAuthStatus(); 
+    }, []);
 
-  const handleLastName = (e) => {
-    setLastName(e.target.value);
-  };
+    const fetchAvailableCars = async () => {
+        try {
+            const response = await apiClient.get('/vehicles'); 
+            setAvailableCars(response.data.vehicles || response.data); 
+        } catch (error) {
+            console.error("Error fetching available cars:", error);
+            toast.error("Failed to load cars. Please try again later.");
+        }
+    };
 
-  const handlePhone = (e) => {
-    setPhone(e.target.value);
-  };
+    const handleLicenseFileChange = (e) => {
+        const file = e.target.files[0];
+        setLicenseFile(file);
+        setLicenseFileName(file ? file.name : "");
+    };
 
-  const handleAge = (e) => {
-    setAge(e.target.value);
-  };
+    const handleFileButtonClick = () => {
+        fileInputRef.current.click();
+    };
 
-  const handleEmail = (e) => {
-    setEmail(e.target.value);
-  };
+    const handleFormSubmit = async (e) => {
+        if(!isAuthenticated){
+          toast.error("Log In First");
+          navigate('/auth');
+          return;
+        }
+        
 
-  const handleAddress = (e) => {
-    setAddress(e.target.value);
-  };
+        const carToRent = availableCars.find(car => car.id.toString() === carType);
 
-  const handleCity = (e) => {
-    setCity(e.target.value);
-  };
+        if (!carToRent || pickUp === "" || dropOff === "" || pickTime === "" || dropTime === "" || !licenseFile) {
+            toast.error("Veuillez remplir tous les champs obligatoires (y compris le fichier de permis).");
+            return;
+        }
 
-  const handleZip = (e) => {
-    setZipCode(e.target.value);
-  };
+        if (new Date(pickTime) >= new Date(dropTime)) {
+             toast.error("La date de retrait doit être après la date de ramassage.");
+             return;
+        }
 
-  // open modal when all inputs are fulfilled
-  const openModal = (e) => {
-    e.preventDefault();
-    const errorMsg = document.querySelector(".error-message");
-    if (
-      pickUp === "" ||
-      dropOff === "" ||
-      pickTime === "" ||
-      dropTime === "" ||
-      carType === ""
-    ) {
-      errorMsg.style.display = "flex";
-    } else {
-      setModal(!modal);
-      const modalDiv = document.querySelector(".booking-modal");
-      modalDiv.scroll(0, 0);
-      errorMsg.style.display = "none";
-    }
-  };
+        setIsSubmitting(true);
+        
+        const totalPrice = calculateTotalPrice(pickTime, dropTime, carToRent.price_per_day);
 
-  // disable page scroll when modal is displayed
-  useEffect(() => {
-    if (modal === true) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "auto";
-    }
-  }, [modal]);
+        if (totalPrice <= 0) {
+            toast.error("Veuillez sélectionner des dates de location valides.");
+            setIsSubmitting(false);
+            return;
+        }
+        
+        
+        const formData = new FormData();
 
-  // confirm modal booking
-  const confirmBooking = (e) => {
-    e.preventDefault();
-    setModal(!modal);
-    const doneMsg = document.querySelector(".booking-done");
-    doneMsg.style.display = "flex";
-  };
+        e.preventDefault();
 
-  // taking value of booking inputs
-  const handleCar = (e) => {
-    setCarType(e.target.value);
-    setCarImg(e.target.value);
-  };
+        formData.append('vehicle_id', carToRent.id);
+        formData.append('start_date', pickTime);
+        formData.append('end_date', dropTime);
+        formData.append('total_price', totalPrice);
+        formData.append('drivers_license', licenseFile);
 
-  const handlePick = (e) => {
-    setPickUp(e.target.value);
-  };
 
-  const handleDrop = (e) => {
-    setDropOff(e.target.value);
-  };
+        try {
+            await apiClient.post('/reservations', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            });
+                
+            toast.success("Reservation successful!");
 
-  const handlePickTime = (e) => {
-    setPickTime(e.target.value);
-  };
+        } catch (error) {
+            console.error("Reservation Error:", error.response || error);
+            toast.error(error.response?.data?.message || "Reservation failed. Check dates and network.");
+        } finally {
+            
+            setCarType("");
+            setPickUp("");
+            setDropOff("");
+            setPickTime("");
+            setDropTime("");
+            setLicenseFile(null); 
+            setLicenseFileName(""); 
+          }
 
-  const handleDropTime = (e) => {
-    setDropTime(e.target.value);
-  };
+    };
 
-  // based on value name show car img
-  let imgUrl;
-  switch (carImg) {
-    case "Audi A1 S-Line":
-      imgUrl = CarAudi;
-      break;
-    case "VW Golf 6":
-      imgUrl = CarGolf;
-      break;
-    case "Toyota Camry":
-      imgUrl = CarToyota;
-      break;
-    case "BMW 320 ModernLine":
-      imgUrl = CarBmw;
-      break;
-    case "Mercedes-Benz GLK":
-      imgUrl = CarMercedes;
-      break;
-    case "VW Passat CC":
-      imgUrl = CarPassat;
-      break;
-    default:
-      imgUrl = "";
-  }
+    return (
+        <>
+            <section id="booking-section" className="book-section">
+                <div className="container">
+                    <div className="book-content">
+                        <div className="book-content__box">
+                            <h2>Réserver une voiture</h2>
 
-  // hide message
-  const hideMessage = () => {
-    const doneMsg = document.querySelector(".booking-done");
-    doneMsg.style.display = "none";
-  };
+                            <form className="box-form" onSubmit={handleFormSubmit}>
+                                <div className="box-form__car-type">
+                                    <label>
+                                        <i className="fa-solid fa-car"></i> &nbsp; Type de voiture <b>*</b>
+                                    </label>
+                                    <select value={carType} onChange={(e) => setCarType(e.target.value)} required>
+                                        <option value="">Sélectionnez le type de votre voiture</option>
+                                        {availableCars.map((car) => (
+                                            <option key={car.id} value={car.id}>
+                                                {`${car.brand} ${car.model} (${car.price_per_day} DH/jour)`}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
 
-  return (
-    <>
-      <section id="booking-section" className="book-section">
-        <div
-          onClick={openModal}
-          className={`modal-overlay ${modal ? "active-modal" : ""}`}
-        ></div>
+                                <div className="box-form__car-type">
+                                    <label>
+                                        <i className="fa-solid fa-location-dot"></i> &nbsp; Ramasser <b>*</b>
+                                    </label>
+                                    <select value={pickUp} onChange={(e) => setPickUp(e.target.value)} required>
+                                        <option value="">Sélectionnez le lieu de prise en charge</option>
+                                        {locations.map((loc) => (
+                                            <option key={loc} value={loc}>{loc}</option>
+                                        ))}
+                                    </select>
+                                </div>
 
-        <div className="container">
-          <div className="book-content">
-            <div className="book-content__box">
-              <h2>Réserver une voiture</h2>
+                                <div className="box-form__car-type">
+                                    <label>
+                                        <i className="fa-solid fa-location-dot"></i> &nbsp; Dépôt <b>*</b>
+                                    </label>
+                                    <select value={dropOff} onChange={(e) => setDropOff(e.target.value)} required>
+                                        <option value="">Sélectionnez le lieu de prise en charge</option>
+                                        {locations.map((loc) => (
+                                            <option key={loc} value={loc}>{loc}</option>
+                                        ))}
+                                    </select>
+                                </div>
 
-              <p className="error-message">
-                Tous les champs sont obligatoires! <i className="fa-solid fa-xmark"></i>
-              </p>
+                                <div className="box-form__car-time">
+                                    <label htmlFor="picktime">
+                                        <i className="fa-regular fa-calendar-days "></i> &nbsp;
+                                        Date de ramassage <b>*</b>
+                                    </label>
+                                    <input
+                                        id="picktime"
+                                        value={pickTime}
+                                        onChange={(e) => setPickTime(e.target.value)}
+                                        type="date"
+                                        min={new Date().toISOString().split('T')[0]} 
+                                        required
+                                    ></input>
+                                </div>
 
-              <p className="booking-done">
-                Veuillez consulter votre boîte mail pour confirmer la commande.{" "}
-                <i onClick={hideMessage} className="fa-solid fa-xmark"></i>
-              </p>
+                                <div className="box-form__car-time">
+                                    <label htmlFor="droptime">
+                                        <i className="fa-regular fa-calendar-days "></i> &nbsp;
+                                        Date de retrait <b>*</b>
+                                    </label>
+                                    <input
+                                        id="droptime"
+                                        value={dropTime}
+                                        onChange={(e) => setDropTime(e.target.value)}
+                                        type="date"
+                                        min={pickTime || new Date().toISOString().split('T')[0]}
+                                        required
+                                    ></input>
+                                </div>
+                                
+                                <div className="box-form__car-time">
+                                    <label htmlFor="license-display">
+                                        <i className="fa-solid fa-address-card"></i> &nbsp;
+                                        Permis de conduire (fichier) <b>*</b>
+                                    </label>
+                                    <div className="custom-file-input-container">
+                                        {/* Hidden actual file input */}
+                                        <input
+                                            ref={fileInputRef}
+                                            id="license"
+                                            onChange={handleLicenseFileChange}
+                                            type="file"
+                                            accept="image/*, .pdf"
+                                            required
+                                            style={{ display: 'none' }} 
+                                        />
+                                        
+                                        <div
+                                            className="file-display"
+                                            onClick={handleFileButtonClick}
+                                            style={{
+                                                padding: '13px 15px',
+                                                border: '1px solid #ccc',
+                                                borderRadius: '3px',
+                                                cursor: 'pointer',
+                                                backgroundColor: '#fff',
+                                                color: licenseFileName ? '#333' : '#a9a9a9',
+                                            }}
+                                        >
+                                            {licenseFileName || "Cliquez pour sélectionner un fichier (max 5MB)"}
+                                        </div>
+                                    </div>
+                                </div>
 
-              <form className="box-form">
-                <div className="box-form__car-type">
-                  <label>
-                    <i className="fa-solid fa-car"></i> &nbsp; Type de voiture <b>*</b>
-                  </label>
-                  <select value={carType} onChange={handleCar}>
-                    <option>Sélectionnez le type de votre voiture</option>
-                    <option value="Audi A1 S-Line">Audi A1 S-Line</option>
-                    <option value="VW Golf 6">VW Golf 6</option>
-                    <option value="Toyota Camry">Toyota Camry</option>
-                    <option value="BMW 320 ModernLine">
-                      BMW 320 ModernLine
-                    </option>
-                    <option value="Mercedes-Benz GLK">Mercedes-Benz GLK</option>
-                    <option value="VW Passat CC">VW Passat CC</option>
-                  </select>
+                                <button type="submit" disabled={isSubmitting}>
+                                    {isSubmitting ? 'Réservation en cours...' : 'Réserver'}
+                                </button>
+                            </form>
+                        </div>
+                    </div>
                 </div>
+            </section>
 
-                <div className="box-form__car-type">
-                  <label>
-                    <i className="fa-solid fa-location-dot"></i> &nbsp; Ramasser {" "}
-                    <b>*</b>
-                  </label>
-                  <select value={pickUp} onChange={handlePick}>
-                    <option>Sélectionnez le lieu de prise en charge</option>
-                    <option>Agadir</option>
-                    <option>Marakesh</option>
-                    <option>Casa Blanca</option>
-                    <option>Tange</option>
-                    <option>Fes</option>
-                    <option>Sawira</option>
-                  </select>
-                </div>
-
-                <div className="box-form__car-type">
-                  <label>
-                    <i className="fa-solid fa-location-dot"></i> &nbsp; Dépôt{" "}
-                    <b>*</b>
-                  </label>
-                  <select value={dropOff} onChange={handleDrop}>
-                    <option>Sélectionnez le lieu de prise en charge</option>
-                    <option>Agadir</option>
-                    <option>Marakesh</option>
-                    <option>Casa Blanca</option>
-                    <option>Tange</option>
-                    <option>Fes</option>
-                    <option>Sawira</option>
-                  </select>
-                </div>
-
-                <div className="box-form__car-time">
-                  <label htmlFor="picktime">
-                    <i className="fa-regular fa-calendar-days "></i> &nbsp;
-                    Date de ramassage <b>*</b>
-                  </label>
-                  <input
-                    id="picktime"
-                    value={pickTime}
-                    onChange={handlePickTime}
-                    type="date"
-                  ></input>
-                </div>
-
-                <div className="box-form__car-time">
-                  <label htmlFor="droptime">
-                    <i className="fa-regular fa-calendar-days "></i> &nbsp;
-                    Date de retrait <b>*</b>
-                  </label>
-                  <input
-                    id="droptime"
-                    value={dropTime}
-                    onChange={handleDropTime}
-                    type="date"
-                  ></input>
-                </div>
-
-                <button onClick={openModal} type="submit">
-                  Aller
-                </button>
-              </form>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <div className={`booking-modal ${modal ? "active-modal" : ""}`}>
-        <div className="booking-modal__title">
-          <h2>Réservation complète</h2>
-          <i onClick={openModal} className="fa-solid fa-xmark"></i>
-        </div>
-        <div className="booking-modal__message">
-          <h4>
-            <i className="fa-solid fa-circle-info"></i> Une fois ce formulaire de réservation complété, vous recevrez :
-          </h4>
-          <p>
-            Votre bon de location à présenter à votre arrivée au comptoir de location et un numéro d'assistance clientèle gratuit.
-          </p>
-        </div>
-        <div className="booking-modal__car-info">
-          <div className="dates-div">
-            <div className="booking-modal__car-info__dates">
-              <h5>Lieu et date</h5>
-              <span>
-                <i className="fa-solid fa-location-dot"></i>
-                <div>
-                  <h6>Date et heure de retrait</h6>
-                  <p>
-                    {pickTime} /{" "}
-                    <input type="time" className="input-time"></input>
-                  </p>
-                </div>
-              </span>
-            </div>
-
-            <div className="booking-modal__car-info__dates">
-              <span>
-                <i className="fa-solid fa-location-dot"></i>
-                <div>
-                  <h6>Date et heure de dépôt</h6>
-                  <p>
-                    {dropTime} /{" "}
-                    <input type="time" className="input-time"></input>
-                  </p>
-                </div>
-              </span>
-            </div>
-
-            <div className="booking-modal__car-info__dates">
-              <span>
-                <i className="fa-solid fa-calendar-days"></i>
-                <div>
-                  <h6>Lieu de ramassage</h6>
-                  <p>{pickUp}</p>
-                </div>
-              </span>
-            </div>
-
-            <div className="booking-modal__car-info__dates">
-              <span>
-                <i className="fa-solid fa-calendar-days"></i>
-                <div>
-                  <h6>Lieu de dépôt</h6>
-                  <p>{dropOff}</p>
-                </div>
-              </span>
-            </div>
-          </div>
-          <div className="booking-modal__car-info__model">
-            <h5>
-              <span>Voiture -</span> {carType}
-            </h5>
-            {imgUrl && <img src={imgUrl} alt="car_img" />}
-          </div>
-        </div>
-
-        <div className="booking-modal__person-info">
-          <h4>Informations personnelles</h4>
-          <form className="info-form">
-            <div className="info-form__2col">
-              <span>
-                <label>
-                 Prénom <b>*</b>
-                </label>
-                <input
-                  value={name}
-                  onChange={handleName}
-                  type="text"
-                  placeholder="Enter your first name"
-                ></input>
-                <p className="error-modal">Ce champ est obligatoire.</p>
-              </span>
-
-              <span>
-                <label>
-                  Nom <b>*</b>
-                </label>
-                <input
-                  value={lastName}
-                  onChange={handleLastName}
-                  type="text"
-                  placeholder="Enter your last name"
-                ></input>
-                <p className="error-modal ">Ce champ est obligatoire.</p>
-              </span>
-
-              <span>
-                <label>
-                  Numéro <b>*</b>
-                </label>
-                <input
-                  value={phone}
-                  onChange={handlePhone}
-                  type="tel"
-                  placeholder="Enter your phone number"
-                ></input>
-                <p className="error-modal">Ce champ est obligatoire.</p>
-              </span>
-
-              <span>
-                <label>
-                  Age <b>*</b>
-                </label>
-                <input
-                  value={age}
-                  onChange={handleAge}
-                  type="number"
-                  placeholder="18"
-                ></input>
-                <p className="error-modal ">Ce champ est obligatoire.</p>
-              </span>
-            </div>
-
-            <div className="info-form__1col">
-              <span>
-                <label>
-                  Email <b>*</b>
-                </label>
-                <input
-                  value={email}
-                  onChange={handleEmail}
-                  type="email"
-                  placeholder="Enter your email address"
-                ></input>
-                <p className="error-modal">Ce champ est obligatoire.</p>
-              </span>
-
-              <span>
-                <label>
-                  Address <b>*</b>
-                </label>
-                <input
-                  value={address}
-                  onChange={handleAddress}
-                  type="text"
-                  placeholder="Enter your street address"
-                ></input>
-                <p className="error-modal ">Ce champ est obligatoire.</p>
-              </span>
-            </div>
-
-            <div className="info-form__2col">
-              <span>
-                <label>
-                  Ville <b>*</b>
-                </label>
-                <input
-                  value={city}
-                  onChange={handleCity}
-                  type="text"
-                  placeholder="Enter your city"
-                ></input>
-                <p className="error-modal">Ce champ est obligatoire.</p>
-              </span>
-
-              <span>
-                <label>
-                  Code postal <b>*</b>
-                </label>
-                <input
-                  value={zipcode}
-                  onChange={handleZip}
-                  type="text"
-                  placeholder="Enter your zip code"
-                ></input>
-                <p className="error-modal ">Ce champ est obligatoire.</p>
-              </span>
-            </div>
-
-            <span className="info-form__checkbox">
-              <input type="checkbox"></input>
-              <p>Veuillez m'envoyer les dernières nouvelles et mises à jour.</p>
-            </span>
-
-            <div className="reserve-button">
-              <button onClick={confirmBooking}>Réservez maintenant</button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </>
-  );
+            <ToastContainer />
+        </>
+    );
 }
 
 export default BookCar;

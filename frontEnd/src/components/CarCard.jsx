@@ -180,7 +180,7 @@ export default function CarCard({ car }) {
           )}
           <div style={styles.priceBadge}>
             {car.price_per_day} DH
-            <span style={{ fontWeight: 500, fontSize: 12, marginLeft: 6 }}>/day</span>
+            <span style={{ fontWeight: 500, fontSize: 12, marginLeft: 6 }}>/Jour</span>
           </div>
         </div>
 
