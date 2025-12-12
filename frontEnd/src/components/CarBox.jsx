@@ -7,13 +7,30 @@ function CarBox({ data, carID }) {
       {data[carID].map((car, id) => (
         <div key={id} className="box-cars">
 
-          <div className="pick-car">
+          <div 
+            className="pick-car"
+            style={{ 
+                width: '500px', 
+                height: '300px', 
+                display: 'flex', 
+                justifyContent: 'center', 
+                alignItems: 'center',
+                overflow: 'hidden',
+                marginTop: '-20px'
+            }} 
+        >
             {carLoad && <span className="loader"></span>}
             <img
-              style={{ display: carLoad ? "none" : "block" }}
-              src={car.img}
-              alt="car_img"
-              onLoad={() => setCarLoad(false)}
+                style={{ 
+                    display: carLoad ? "none" : "block",
+                    maxWidth: '100%', 
+                    maxHeight: '100%', 
+                    objectFit: 'contain', 
+                    margin: '0 auto', 
+                }}
+                src={car.img}
+                alt="car_img"
+                onLoad={() => setCarLoad(false)}
             />
           </div>
           <div className="pick-description">
@@ -56,9 +73,6 @@ function CarBox({ data, carID }) {
                 <span>{car.fuel}</span>
               </div>
             </div>
-            <a className="cta-btn" href="#booking-section">
-              Réservez
-            </a>
           </div>
         </div>
       ))}
