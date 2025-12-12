@@ -125,7 +125,7 @@
 }
 
 .reservation-card .total-price {
-    font-size: 20px;  
+    font-size: 32px;  
     font-weight: 800;  
     color: var(--primary-color);
     margin: 0;
@@ -151,4 +151,24 @@
 .no-reservations {
     background-color: var(--light-gray);
     color: #6c757d;
+}
+
+.reservation-card {
+}
+
+.card-footer .footer-content-wrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+}
+
+.card-footer .total-price {
+    font-size: 2rem;
+    color: var(--theme-color, #29476d); 
+}
+
+
+.download-button i {
+    margin-right: 8px;
 }
