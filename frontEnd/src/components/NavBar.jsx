@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import Logo from "../images/logo/logo.jpg";
+import Logo from "../images/logo/logo.png";
 import { useState, useEffect } from "react";
 import {apiClient, apiAdmin} from '../api/api';
 

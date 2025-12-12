@@ -79,7 +79,7 @@ function Faq() {
                   onClick={() => openQ("q3")}
                   className={`faq-box__question ${getClassQuestion("q3")}`}
                 >
-                  <p>3. How do I find such low rental car prices?</p>
+                  <p>3. Comment trouver des prix de location de voiture aussi bas ?</p>
                   <i className="fa-solid fa-angle-down"></i>
                 </div>
                 <div
